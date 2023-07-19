@@ -10,3 +10,5 @@ panic = "abort"
 [profile.release]
 panic = "abort"
 [dependencies]
+# Note that this bootloader is created by Rust, but is not linked until later.c
+bootloader = "0.9.23"
