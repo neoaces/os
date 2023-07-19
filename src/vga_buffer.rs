@@ -142,6 +142,36 @@ impl fmt::Write for Writer { // Allows printing integers and floats
 	}
 }
 
+// Definition of println! in std library
+// #[macro_export]
+// macro_rules! println {
+//     () => (print!("\n"));
+//     ($($arg:tt)*) => (print!("{}\n", format_args!($($arg)*)));
+// }
+// - Note how it calls the print! macro, and print! calls a function called _print().
+
+#[macro_export]
+macro_rules! print {
+	($($arg:tt)*) => {
+		$crate::vga_buffer::_print(format_args!($($arg)*));
+	};
+}
+
+#[macro_export]
+macro_rules! println {
+	() => ($crate::print!("\n"));
+	($($arg:tt)*) => {
+		$crate::vga_buffer::_print(format_args!($($arg)*));
+	};
+}
+
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+	use core::fmt::Write;
+	WRITER.lock().write_fmt(args).unwrap();
+}
+// Macros for printing to screen
+
 // Example case: NOT REQUIRED AFTER WRITER STATIC
 // pub fn print_ex(string: &str) {
 // 	use core::fmt::Write;
