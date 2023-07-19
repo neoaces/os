@@ -6,9 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [profile.dev]
-panic = "abort"
+# panic = "abort"
 [profile.release]
-panic = "abort"
+# panic = "abort"
 [dependencies]
 # Note that this bootloader is created by Rust, but is not linked until later.c
 bootloader = "0.9.23"
@@ -19,8 +19,16 @@ volatile = "0.2.6"
 # Enable spinlocks, which allow us to make a mutable static BUFFER
 spin = "0.5.2"
 
+# x86_64
+x86_64 = "0.14.2"
 # Allows initializing the static Buffer at first time accessed
 # since we need to convert the C pointer to a &mut at runtime
 [dependencies.lazy_static]
 version = "1.0"
 features = ["spin_no_std"]
+
+[package.metadata.bootimage]
+test-args = ["-device", "isa-debug-exit,iobase=0xf4,iosize=0x04"]
+test-success-exit-code = 33		# (0x10 << 1) | 1
+# NOTE: We define 0x10 as success in main.rs, referring to (value << 1) | 1 as the exit status.
+# test-failure-exit-code = (1 << 1) | 1
